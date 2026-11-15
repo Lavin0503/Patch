@@ -34,13 +34,39 @@ function tw(t, fs, fw, ls) {
 }
 
 const short = (n) => (n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'k' : String(n));
-const get = async (url) => { const r = await fetch(url, { headers: { 'User-Agent': 'patch-badges' } }); if (!r.ok) throw new Error(r.status); return r.json(); };
+const get = async (url) => {
+  const headers = { 'User-Agent': 'patch-badges' };
+  // Optional: set GITHUB_TOKEN in Vercel env vars to avoid GitHub's low anonymous rate limit.
+  if (url.includes('api.github.com') && process.env.GITHUB_TOKEN) headers.Authorization = 'Bearer ' + process.env.GITHUB_TOKEN;
+  const r = await fetch(url, { headers });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+};
 
 // Live sources. Add your own here.
 const SOURCES = {
   discord: async (id) => short((await get(`https://discord.com/api/v9/invites/${encodeURIComponent(id)}?with_counts=true`)).approximate_member_count) + ' members',
   ghfollowers: async (id) => short((await get(`https://api.github.com/users/${id}`)).followers),
   ghstars: async (id) => short((await get(`https://api.github.com/repos/${id}`)).stargazers_count),
+  discordonline: async (id) => short((await get(`https://discord.com/api/v9/invites/${encodeURIComponent(id)}?with_counts=true`)).approximate_presence_count) + ' online',
+  ghforks: async (id) => short((await get(`https://api.github.com/repos/${id}`)).forks_count),
+  ghissues: async (id) => short((await get(`https://api.github.com/repos/${id}`)).open_issues_count),
+  ghrelease: async (id) => (await get(`https://api.github.com/repos/${id}/releases/latest`)).tag_name,
+  npmver: async (id) => 'v' + (await get(`https://registry.npmjs.org/${id}/latest`)).version,
+  dockerpulls: async (id) => short((await get(`https://hub.docker.com/v2/repositories/${id}`)).pull_count),
+  bluesky: async (id) => short((await get(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(id)}`)).followersCount),
+  hnkarma: async (id) => short((await get(`https://hacker-news.firebaseio.com/v0/user/${id}.json`)).karma),
+  youtube: async (id) => {
+    const key = process.env.YOUTUBE_API_KEY; if (!key) throw new Error('nokey');
+    const by = id.startsWith('@') ? 'forHandle=' + encodeURIComponent(id) : 'id=' + encodeURIComponent(id);
+    const j = await get(`https://www.googleapis.com/youtube/v3/channels?part=statistics&${by}&key=${key}`);
+    const st = j.items && j.items[0] && j.items[0].statistics; if (!st) throw new Error('none');
+    return st.hiddenSubscriberCount ? 'hidden' : short(+st.subscriberCount);
+  },
+  mastodon: async (id) => { const [u, inst] = id.replace(/^@/, '').split('@'); return short((await get(`https://${inst}/api/v1/accounts/lookup?acct=${encodeURIComponent(u)}`)).followers_count); },
+  reddit: async (id) => short((await get(`https://www.reddit.com/r/${id}/about.json`)).data.subscribers),
+  pypidl: async (id) => short((await get(`https://pypistats.org/api/packages/${id}/recent`)).data.last_month) + '/mo',
+  crates: async (id) => short((await get(`https://crates.io/api/v1/crates/${id}`)).crate.downloads),
   npmdl: async (id) => short((await get(`https://api.npmjs.org/downloads/point/last-month/${id}`)).downloads) + '/mo',
 };
 
@@ -100,7 +126,7 @@ module.exports = async (req, res) => {
   if (q.source) {
     ttl = 600;
     try { if (!SOURCES[q.source]) throw new Error('unknown source'); msg = await SOURCES[q.source](String(q.id || '')); }
-    catch (e) { msg = 'unavailable'; ttl = 60; }
+    catch (e) { msg = e.message === 'nokey' ? 'no API key' : 'unavailable'; ttl = 60; }
   }
   res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
   res.setHeader('Cache-Control', `public, max-age=${Math.min(ttl, 300)}, s-maxage=${ttl}, stale-while-revalidate=86400`);
