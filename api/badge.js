@@ -128,6 +128,7 @@ module.exports = async (req, res) => {
     catch (e) { msg = e.message === 'nokey' ? 'no API key' : 'unavailable'; ttl = 60; }
   }
   res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', `public, max-age=${Math.min(ttl, 300)}, s-maxage=${ttl}, stale-while-revalidate=86400`);
   res.status(200).send(render(q, label.slice(0, 60), msg.slice(0, 60)));
 };
