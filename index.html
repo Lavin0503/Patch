@@ -56,81 +56,54 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 h3{font:600 13px Inter,sans-serif;color:var(--muted);margin:22px 0 14px;padding-top:16px;border-top:1px solid var(--line)}
 .right{align-self:start;position:sticky;top:16px}
 @media(max-width:800px){.right{position:static}}
-.copy.alt{background:none;color:var(--ink);border:1px solid var(--line)}.btns{display:flex;gap:8px;flex-wrap:wrap}.tabs{flex-wrap:wrap}#live{display:flex;gap:8px;margin-bottom:10px}#live[hidden]{display:none}#host{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}#host[hidden]{display:none}#host input,#host select{flex:1 1 140px}#note{font-size:13px;color:var(--muted);margin:10px 0 0}</style>
+.copy.alt{background:none;color:var(--ink);border:1px solid var(--line)}.btns{display:flex;gap:8px;flex-wrap:wrap}.tabs{flex-wrap:wrap}#live{display:flex;gap:8px;margin-bottom:10px}#live[hidden]{display:none}#host{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}#host[hidden]{display:none}#host input,#host select{flex:1 1 140px}#note{font-size:13px;color:var(--muted);margin:10px 0 0}.steps{display:grid;gap:16px;align-content:start}.step{display:flex;gap:10px;align-items:center;font:600 16px Inter,sans-serif;margin:0 0 14px}.step b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px}summary{cursor:pointer;font-weight:600}.hint{font-size:12px;color:var(--muted);margin:6px 0 0}.status{font-size:13px;color:var(--muted);margin:8px 2px 0;min-height:20px}[hidden]{display:none!important}</style>
 </head>
 <body>
 <main>
-  <div class="top">
-    <div>
-      <h1>Patch</h1>
-      <p class="sub">Make clean, modern badges for your README or site. Pick the text and colors, then copy the SVG.</p>
-    </div>
-    <button id="theme" type="button">Theme</button>
-  </div>
-
+  <div class="top"><div><h1>Patch</h1><p class="sub">Make a badge in 3 steps, then copy it into your README.</p></div><button id="theme" type="button">Theme</button></div>
   <div class="grid">
-    <section class="panel" aria-label="Badge settings">
-      <div class="f"><label for="label">Label</label><input type="text" id="label" value="build"></div>
-      <div class="f"><label for="msg">Message</label><input type="text" id="msg" value="passing"></div>
-      <div class="row f">
-        <div><label for="lc">Label color</label><input type="color" id="lc" value="#1b1740"></div>
-        <div><label for="mc">Message color</label><input type="color" id="mc" value="#16a34a"></div>
-      </div>
-      <div class="f"><label>Style</label>
-        <div class="seg" id="style">
-          <button type="button" data-v="solid" aria-pressed="true">Solid</button>
-          <button type="button" data-v="soft" aria-pressed="false">Soft</button>
-          <button type="button" data-v="outline" aria-pressed="false">Outline</button>
-          <button type="button" data-v="square" aria-pressed="false">Square</button>
-          <button type="button" data-v="plastic" aria-pressed="false">Plastic</button>
-          <button type="button" data-v="ftb" aria-pressed="false">Bold</button>
-        </div>
-      </div>
-      <div class="f"><label>Size</label>
-        <div class="seg" id="size">
-          <button type="button" data-v="22" aria-pressed="false">Small</button>
-          <button type="button" data-v="28" aria-pressed="true">Medium</button>
-          <button type="button" data-v="36" aria-pressed="false">Large</button>
-        </div>
-      </div>
-      <div class="f"><label for="q">Logo</label><input type="text" id="q" placeholder="Search logos">
-<div id="icons" class="icons"></div>
-<div class="row2"><span id="cur">No logo</span><span><button type="button" id="brand" class="mini">Brand color</button> <button type="button" id="clr" class="mini">Clear</button></span></div></div>
-<h3>Shape</h3>
-<div class="f"><label for="rad">Roundness</label><input type="range" id="rad" min="0" max="100"></div>
-<div class="f"><label for="pad">Padding</label><input type="range" id="pad" min="20" max="80"></div>
-<div class="f"><label for="fsz">Text size</label><input type="range" id="fsz" min="34" max="60"></div>
-<h3>Text</h3>
-<div class="row f"><div><label for="font">Font</label><select id="font"><option>Inter</option><option>Serif</option><option>Mono</option><option>System</option></select></div>
-<div><label for="fw">Weight</label><select id="fw"><option value="400">Regular</option><option value="600">Semibold</option><option value="700">Bold</option></select></div></div>
-<div class="row f"><div><label for="ltc">Label text</label><input type="color" id="ltc"></div><div><label for="mtc">Message text</label><input type="color" id="mtc"></div><div><label for="ic">Logo</label><input type="color" id="ic"></div></div>
-<div class="row f"><div><label for="dc">Dot color</label><input type="color" id="dc"></div><div><label for="anim">Dot animation</label><select id="anim"><option value="none">None</option><option value="pulse">Pulse</option><option value="blink">Blink</option><option value="bounce">Bounce</option></select></div></div>
-<div class="f"><button type="button" id="autoc" class="mini">Reset text and logo colors</button></div>
-<h3>Details</h3>
-<div class="checks"><label class="chk"><input type="checkbox" id="dot"> Status dot</label><label class="chk"><input type="checkbox" id="up"> Uppercase</label><label class="chk"><input type="checkbox" id="grad"> Gloss</label><label class="chk"><input type="checkbox" id="bord"> Border</label></div>
-    </section>
-
+    <div class="steps">
+      <section class="panel">
+        <h2 class="step"><b>1</b> What should it show?</h2>
+        <div class="f"><label for="src">Show</label><select id="src" aria-label="Data source"><option value="static">Fixed text</option><optgroup label="Social"><option value="discord">Discord members</option><option value="discordonline">Discord online now</option><option value="youtube">YouTube subscribers</option><option value="bluesky">Bluesky followers</option><option value="mastodon">Mastodon followers</option><option value="reddit">Reddit members</option><option value="hnkarma">Hacker News karma</option></optgroup><optgroup label="GitHub"><option value="ghfollowers">GitHub followers</option><option value="ghstars">GitHub stars</option><option value="ghforks">GitHub forks</option><option value="ghissues">GitHub open issues</option><option value="ghrelease">GitHub latest release</option></optgroup><optgroup label="Packages"><option value="npmdl">npm downloads</option><option value="npmver">npm version</option><option value="pypidl">PyPI downloads</option><option value="crates">crates.io downloads</option><option value="dockerpulls">Docker pulls</option></optgroup></select></div>
+        <div class="f" id="sidf" hidden><label for="sid">ID</label><input type="text" id="sid" placeholder="" aria-label="Source id"><p class="hint" id="hint"></p></div>
+        <div class="row"><div class="f"><label for="label">Left text</label><input type="text" id="label" value="build"></div><div class="f" id="msgf"><label for="msg">Right text</label><input type="text" id="msg" value="passing"></div></div>
+      </section>
+      <section class="panel">
+        <h2 class="step"><b>2</b> Make it yours</h2>
+        <div class="f"><label>Style</label><div class="seg" id="style">
+          <button type="button" data-v="solid" aria-pressed="true">Solid</button><button type="button" data-v="soft" aria-pressed="false">Soft</button><button type="button" data-v="outline" aria-pressed="false">Outline</button><button type="button" data-v="square" aria-pressed="false">Square</button><button type="button" data-v="plastic" aria-pressed="false">Plastic</button><button type="button" data-v="ftb" aria-pressed="false">Bold</button></div></div>
+        <div class="row f"><div><label for="lc">Left color</label><input type="color" id="lc" value="#1b1740"></div><div><label for="mc">Right color</label><input type="color" id="mc" value="#16a34a"></div></div>
+        <div class="f"><label for="q">Logo (optional)</label><input type="text" id="q" placeholder="Search logos">
+          <div id="icons" class="icons"></div>
+          <div class="row2"><span id="cur">No logo</span><span><button type="button" id="brand" class="mini">Use brand color</button> <button type="button" id="clr" class="mini">Clear</button></span></div></div>
+      </section>
+      <details class="panel"><summary>More options</summary>
+        <div class="f" style="margin-top:16px"><label>Size</label><div class="seg" id="size"><button type="button" data-v="22" aria-pressed="false">Small</button><button type="button" data-v="28" aria-pressed="true">Medium</button><button type="button" data-v="36" aria-pressed="false">Large</button></div></div>
+        <div class="f"><label for="rad">Roundness</label><input type="range" id="rad" min="0" max="100"></div>
+        <div class="f"><label for="pad">Padding</label><input type="range" id="pad" min="20" max="80"></div>
+        <div class="f"><label for="fsz">Text size</label><input type="range" id="fsz" min="34" max="60"></div>
+        <div class="row f"><div><label for="font">Font</label><select id="font"><option>Inter</option><option>Serif</option><option>Mono</option><option>System</option></select></div><div><label for="fw">Weight</label><select id="fw"><option value="400">Regular</option><option value="600">Semibold</option><option value="700">Bold</option></select></div></div>
+        <div class="row f"><div><label for="ltc">Left text</label><input type="color" id="ltc"></div><div><label for="mtc">Right text</label><input type="color" id="mtc"></div><div><label for="ic">Logo</label><input type="color" id="ic"></div></div>
+        <div class="row f"><div><label for="dc">Dot color</label><input type="color" id="dc"></div><div><label for="anim">Dot animation</label><select id="anim"><option value="none">None</option><option value="pulse">Pulse</option><option value="blink">Blink</option><option value="bounce">Bounce</option></select></div></div>
+        <div class="f"><button type="button" id="autoc" class="mini">Reset text and logo colors</button></div>
+        <div class="checks"><label class="chk"><input type="checkbox" id="dot"> Dot</label><label class="chk"><input type="checkbox" id="up"> Uppercase</label><label class="chk"><input type="checkbox" id="grad"> Gloss</label><label class="chk"><input type="checkbox" id="bord"> Border</label></div>
+      </details>
+    </div>
     <section class="right">
       <div class="stage" id="stage" aria-live="polite"></div>
+      <p id="status" class="status" aria-live="polite"></p>
       <div class="panel out">
-        <div class="f"><label for="lnk">Click-through link (optional)</label><input type="text" id="lnk" placeholder="https://discord.gg/yourinvite"></div>
-        <div class="tabs" id="fmt">
-          <button type="button" data-v="svg" aria-pressed="true">SVG</button>
-          <button type="button" data-v="html" aria-pressed="false">HTML</button>
-          <button type="button" data-v="md" aria-pressed="false">Markdown</button>
-          <button type="button" data-v="url" aria-pressed="false">Shields link</button>
-          <button type="button" data-v="live" aria-pressed="false">Live data</button>
-          <button type="button" data-v="host" aria-pressed="false">Your Vercel</button>
-        </div>
-        <div id="host" hidden><input type="text" id="dom" value="your-app.vercel.app" aria-label="Your Vercel domain"><select id="src" aria-label="Data source"><option value="static">Fixed text</option><option value="discord">Discord members</option><option value="ghfollowers">GitHub followers</option><option value="ghstars">GitHub stars</option><option value="npmdl">npm downloads</option></select><input type="text" id="sid" placeholder="Invite code, user, owner/repo or package" aria-label="Source id"></div>
-        <div id="live" hidden><select id="lt" aria-label="Badge type"></select><input type="text" id="lx" placeholder="owner/repo or package" aria-label="Repository or package"></div>
+        <h2 class="step" style="margin-top:0"><b>3</b> Copy it</h2>
+        <div class="f"><label for="lnk">Open this when clicked (optional)</label><input type="text" id="lnk" placeholder="https://discord.gg/yourinvite"></div>
+        <div class="f" id="domrow"><label for="dom">Your Vercel site</label><input type="text" id="dom" value="patch-lime.vercel.app"></div>
+        <div class="tabs" id="fmt"><button type="button" data-v="md" aria-pressed="true">Markdown</button><button type="button" data-v="html" aria-pressed="false">HTML</button><button type="button" data-v="url" aria-pressed="false">Image link</button><button type="button" data-v="svg" aria-pressed="false">SVG code</button></div>
         <textarea id="code" readonly aria-label="Badge code"></textarea>
-        <div class="btns"><button class="copy" id="copy" type="button">Copy code</button><button class="copy alt" id="dsvg" type="button">Download SVG</button><button class="copy alt" id="dgif" type="button">Download GIF</button></div><p id="note"></p>
+        <div class="btns"><button class="copy" id="copy" type="button">Copy</button><button class="copy alt" id="dsvg" type="button">Download SVG</button><button class="copy alt" id="dgif" type="button">Download GIF</button></div><p id="note"></p>
       </div>
     </section>
   </div>
-
-  <h2>Start from a preset</h2>
+  <h2>Or start from a preset</h2>
   <div class="presets" id="presets"></div>
 </main>
 
@@ -139,7 +112,7 @@ var ICONS=[["1001Tracklists","1001tracklists","40AEF0","M8.0957 1.334v1.3457H6.7
 var BY={};ICONS.forEach(function(i){BY[i[1]]=i});
 function pick(s){var i=BY[s];return i?{t:i[0],h:i[2],p:i[3],s:i[1]}:null}
 var FONTS={Inter:"Inter, system-ui, sans-serif",Serif:"Georgia, 'Times New Roman', serif",Mono:"'JetBrains Mono', ui-monospace, Menlo, monospace",System:"system-ui, -apple-system, Segoe UI, sans-serif"};
-var DEF={label:'build',msg:'passing',lc:'#1b1740',mc:'#16a34a',ltc:null,mtc:null,ic:null,icon:null,style:'solid',h:28,dot:true,dc:null,anim:'none',font:'Inter',fw:600,rad:100,pad:40,fsz:46,up:false,grad:false,bord:false,fmt:'svg'};
+var DEF={label:'build',msg:'passing',lc:'#1b1740',mc:'#16a34a',ltc:null,mtc:null,ic:null,icon:null,style:'solid',h:28,dot:true,dc:null,anim:'none',font:'Inter',fw:600,rad:100,pad:40,fsz:46,up:false,grad:false,bord:false,fmt:'md'};
 var S=Object.assign({},DEF);
 var cv=document.createElement('canvas').getContext('2d');
 function $(i){return document.getElementById(i)}
@@ -192,34 +165,49 @@ function badge(o,ph){
   s+='<text x="'+(lw+mW/2+(hasL?0:lead/2))+'" y="'+ty+'" text-anchor="middle" fill="'+mt+'">'+esc(msg)+'</text></g></svg>';
   return s;
 }
-function sh(t){return encodeURIComponent(t.replace(/-/g,'--').replace(/_/g,'__').replace(/ /g,'_'))}
-var SMAP={solid:'flat',soft:'flat',outline:'flat',square:'flat-square',plastic:'plastic',ftb:'for-the-badge'};
-function qs(x){var p=(x||[]).concat(['style='+SMAP[S.style]]);if(S.icon){p.push('logo='+S.icon.s);if(S.ic)p.push('logoColor='+S.ic.slice(1))}p.push('labelColor='+S.lc.slice(1));return p.join('&')}
-var LT=[['GitHub stars','github/stars/'],['GitHub forks','github/forks/'],['GitHub issues','github/issues/'],['GitHub license','github/license/'],['GitHub release','github/v/release/'],['GitHub last commit','github/last-commit/'],['npm version','npm/v/'],['npm downloads','npm/dm/'],['PyPI version','pypi/v/'],['PyPI downloads','pypi/dm/'],['Docker pulls','docker/pulls/']];
-var NOTES={svg:'Animated SVG. It works on GitHub, GitLab and most sites. Download it, commit it, and link it from your README.',html:'Paste this into any web page.',md:'Download the file, put it next to your README, and use this line. Use badge.gif instead if you need a GIF.',url:'A Shields.io link: it works anywhere, but Shields draws it, so soft and outline styles, fonts, roundness and animation are not included.',host:'Uses your own deployed server (see the Vercel files). Fixed text works for any badge; the other sources show a live count. A badge image cannot hold a link, so add one above to get a clickable badge.',live:'Live data from Shields.io. Colors, logo and the flat, square, plastic and bold styles carry over. Preview is not shown because this page cannot load outside images.'};
-function code(svg){var r=code0(svg),L=$('lnk').value.trim();if(!L||S.fmt==='svg')return r;if(S.fmt==='html')return '<a href="'+L+'">\n'+r+'\n</a>';return '['+r+']('+L+')'}
+var NOTES={md:'Paste this into your README. The image comes from your own Vercel server. Add a click-through link above to make the badge clickable.',html:'Paste this into any web page. Add a click-through link above to make it clickable.',url:'The direct image link.',svg:'Copy the SVG code, or use Download SVG to save a file.'};
+function code(svg){var r=code0(svg),L=$('lnk').value.trim();if(!L||S.fmt==='svg'||S.fmt==='url')return r;if(S.fmt==='html')return '<a href="'+L+'">\n'+r+'\n</a>';return '['+r+']('+L+')'}
 function code0(svg){
-  var f=S.fmt,ext=S.anim!=='none'?'svg':'svg',alt=(S.label+' '+S.msg).trim();
-  if(f==='html')return '<span style="display:inline-block;line-height:0">\n'+svg+'\n</span>';
-  if(f==='md')return '!['+alt+'](./badge.svg)';
-  var base='https://img.shields.io/';
-  if(f==='url')return '!['+alt+']('+base+'badge/'+(S.label?sh(S.label)+'-':'')+sh(S.msg)+'-'+S.mc.slice(1)+'?'+qs()+')';
-  if(f==='live'){var t=LT[$('lt').selectedIndex],x=$('lx').value.trim()||'owner/repo';return '!['+t[0]+']('+base+t[1]+x+'?'+qs(['color='+S.mc.slice(1)])+')'}
-  if(f==='host')return hostMd();
+  var f=S.fmt,live=$('src').value!=='static',alt=live?S.label:(S.label+' '+S.msg).trim(),u=hostUrl();
+  if(f==='md')return '!['+alt+']('+u+')';
+  if(f==='html')return '<img src="'+u+'" alt="'+esc(alt)+'">';
+  if(f==='url')return u;
   return svg;
 }
-function hostMd(){
-  var d=($('dom').value.trim()||'your-app.vercel.app').replace(/^https?:\/\//,'').replace(/\/$/,''),p=[],c=function(k,v){p.push(k+'='+encodeURIComponent(v))},u=function(x){return x.slice(1)},src=$('src').value;
+function hostQs(){
+  var p=[],c=function(k,v){p.push(k+'='+encodeURIComponent(v))},u=function(x){return x.slice(1)},src=$('src').value;
   if(src==='static'){c('label',S.label);c('msg',S.msg)}else{c('source',src);c('id',$('sid').value.trim()||'id');c('label',S.label)}
   c('color',u(S.mc));c('labelColor',u(S.lc));c('style',S.style);
   if(S.icon){c('logo',S.icon.s);if(S.ic)c('logoColor',u(S.ic))}
   if(S.dot){c('dot','1');if(S.dc)c('dotColor',u(S.dc));if(S.anim!=='none')c('anim',S.anim)}
   c('h',S.h);c('font',S.font);c('fw',S.fw);c('rad',S.rad);c('pad',S.pad);c('fsz',S.fsz);
   if(S.up)c('up','1');if(S.grad)c('grad','1');if(S.bord)c('bord','1');if(S.ltc)c('ltc',u(S.ltc));if(S.mtc)c('mtc',u(S.mtc));
-  return '!['+(S.label+' '+S.msg).trim()+'](https://'+d+'/badge?'+p.join('&')+')';
+  return p.join('&');
 }
-function render(){var svg=badge(S);$('stage').innerHTML=svg;$('code').value=code(svg);
-  $('cur').textContent=S.icon?S.icon.t:'No logo';$('live').hidden=S.fmt!=='live';$('host').hidden=S.fmt!=='host';$('note').textContent=NOTES[S.fmt]}
+function hostUrl(){return 'https://'+($('dom').value.trim()||'patch-lime.vercel.app').replace(/^https?:\/\//,'').replace(/\/$/,'')+'/api/badge?'+hostQs()}
+var ONVERCEL=/^https?:$/.test(location.protocol)&&!/claude/i.test(location.hostname);
+function hosted(){return ['md','html','url'].indexOf(S.fmt)>-1}
+var tm;
+function checkLive(live){
+  var st=$('status');clearTimeout(tm);
+  if(!live){st.textContent='';return}
+  if(!ONVERCEL){st.textContent='Live numbers do not load inside Claude. Open your own site to see them.';return}
+  st.textContent='Loading live info…';
+  tm=setTimeout(function(){
+    fetch('/api/badge?'+hostQs()).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){
+      var m=t.match(/aria-label="([^"]*)"/),a=m?m[1]:'';
+      $('stage').innerHTML=t;
+      st.textContent=/unavailable/.test(a)?'The server could not get that info. Check the ID, and that the account or repo is public.':/no API key/.test(a)?'This source needs an API key added in Vercel (Settings, Environment Variables).':'Live from your server: '+a;
+    }).catch(function(){st.textContent='Could not reach your badge server. Make sure api/badge.js is in your repo and deployed.'});
+  },400);
+}
+function render(){
+  var svg=badge(S),live=$('src').value!=='static';
+  $('stage').innerHTML=svg;checkLive(live);
+  $('code').value=code(svg);$('cur').textContent=S.icon?S.icon.t:'No logo';
+  $('domrow').hidden=!hosted();$('sidf').hidden=!live;$('msgf').hidden=live;
+  $('note').textContent=NOTES[S.fmt]+(live&&!ONVERCEL&&hosted()?' The live count shows once the badge is in your README or when you open this page on your own Vercel site.':'');
+}
 var CTL=[['label'],['msg'],['lc'],['mc'],['font'],['anim'],['fw',1],['rad',1],['pad',1],['fsz',1],['dot','c'],['up','c'],['grad','c'],['bord','c']];
 CTL.forEach(function(c){var e=$(c[0]);e.addEventListener('input',function(){
   S[c[0]]=c[1]==='c'?e.checked:c[1]?+e.value:e.value;render()})});
@@ -312,16 +300,16 @@ async function makeGif(){
   o.push(0x3B);return new Blob([new Uint8Array(o)],{type:'image/gif'});
 }
 async function save(name,data){
-  var note=$('note');
-  try{var d=window.claude&&await claude.use('downloads');if(!d)throw 0;await d.save({filename:name,data:data})}
-  catch(e){if(!e||e.code!=='declined')note.textContent='Downloads are not available in this view. Copy the SVG code instead and save it as badge.svg.'}
+  try{var d=window.claude&&claude.use&&await claude.use('downloads');if(d){await d.save({filename:name,data:data});return}}catch(e){if(e&&e.code==='declined')return}
+  var a=document.createElement('a'),u=URL.createObjectURL(data);a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);
 }
 $('dsvg').onclick=function(){save('badge.svg',new Blob([badge(S)],{type:'image/svg+xml'}))};
 $('dgif').onclick=async function(){var b=this;b.textContent='Making GIF…';try{await save('badge.gif',await makeGif())}catch(e){$('note').textContent='Could not make the GIF in this browser.'}b.textContent='Download GIF'};
-$('lt').innerHTML=LT.map(function(t){return '<option>'+t[0]+'</option>'}).join('');
-['lt','lx','lnk','dom','src','sid'].forEach(function(i){$(i).addEventListener('input',render)});
-$('src').addEventListener('change',function(){var l={discord:'discord',ghfollowers:'followers',ghstars:'stars',npmdl:'downloads'}[this.value];if(l){S.label=l;sync()}render()});
-sync();showIcons();render();
+['lnk','dom','src','sid'].forEach(function(i){$(i).addEventListener('input',render)});
+var HINT={discord:'Invite code (after discord.gg/)',discordonline:'Invite code',youtube:'@handle or channel id (needs a YouTube API key in Vercel)',bluesky:'handle, e.g. name.bsky.social',mastodon:'user@instance.social',reddit:'subreddit name',hnkarma:'username',ghfollowers:'GitHub username',ghstars:'owner/repo',ghforks:'owner/repo',ghissues:'owner/repo',ghrelease:'owner/repo',npmdl:'package name',npmver:'package name',pypidl:'package name',crates:'crate name',dockerpulls:'user/image'};
+var LBL={discord:'discord',discordonline:'discord',youtube:'subscribers',bluesky:'bluesky',mastodon:'followers',reddit:'members',hnkarma:'karma',ghfollowers:'followers',ghstars:'stars',ghforks:'forks',ghissues:'issues',ghrelease:'release',npmdl:'downloads',npmver:'npm',pypidl:'downloads',crates:'downloads',dockerpulls:'pulls'};
+$('src').addEventListener('change',function(){$('sid').placeholder=HINT[this.value]||'';$('hint').textContent=HINT[this.value]?'Enter: '+HINT[this.value]:'';if(LBL[this.value]){S.label=LBL[this.value];sync()}render()});
+if(ONVERCEL)$('dom').value=location.host;sync();showIcons();render();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){render()});
 </script>
 </body>
