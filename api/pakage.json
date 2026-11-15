@@ -1,6 +1,0 @@
-{
-  "name": "patch-badges",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": { "simple-icons": "^16.37.0" }
-}
