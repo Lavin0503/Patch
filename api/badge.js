@@ -1,14 +1,13 @@
 // Patch badge server: GET /badge?label=members&source=discord&id=INVITE&color=5865f2&logo=discord
-// simple-icons is an ES module, so load it with import() (works on every Node version).
-// If it fails to load, badges still render, just without logos.
+// Logos are bundled in _icons.json (slug -> SVG path), so there is no npm package to load.
 let ICONS = null;
 async function loadIcons() {
   if (ICONS) return ICONS;
   ICONS = {};
   try {
-    const si = await import('simple-icons');
-    Object.values(si).forEach((i) => { if (i && i.slug && i.path) ICONS[i.slug] = i; });
-  } catch (e) { console.error('simple-icons failed to load', e); }
+    const raw = require('./_icons.json');
+    Object.keys(raw).forEach((k) => { ICONS[k] = { path: raw[k] }; });
+  } catch (e) { console.error('icons failed to load', e); }
   return ICONS;
 }
 
