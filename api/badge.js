@@ -1,7 +1,16 @@
 // Patch badge server: GET /badge?label=members&source=discord&id=INVITE&color=5865f2&logo=discord
-const si = require('simple-icons');
-const ICONS = {};
-Object.values(si).forEach((i) => { if (i && i.slug && i.path) ICONS[i.slug] = i; });
+// simple-icons is an ES module, so load it with import() (works on every Node version).
+// If it fails to load, badges still render, just without logos.
+let ICONS = null;
+async function loadIcons() {
+  if (ICONS) return ICONS;
+  ICONS = {};
+  try {
+    const si = await import('simple-icons');
+    Object.values(si).forEach((i) => { if (i && i.slug && i.path) ICONS[i.slug] = i; });
+  } catch (e) { console.error('simple-icons failed to load', e); }
+  return ICONS;
+}
 
 const FONTS = {
   Inter: 'Inter, system-ui, sans-serif',
@@ -45,7 +54,7 @@ function render(q, label, msg) {
   if (style === 'ftb') { fw = 700; pad *= 1.3; }
   const r = style === 'square' || style === 'ftb' ? 3 : h / 2 * num(q.rad, 100, 0, 100) / 100;
   const ls = style === 'ftb' ? fs * 0.1 : 0;
-  const icon = q.logo ? ICONS[String(q.logo).toLowerCase()] : null, isz = h * 0.5;
+  const icon = q.logo && ICONS ? ICONS[String(q.logo).toLowerCase()] : null, isz = h * 0.5;
   const dot = on(q.dot), dotW = dot ? h * 0.38 : 0, lead = dotW + (icon ? isz + h * 0.18 : 0);
   const lab = up ? label.toUpperCase() : label, m = up ? msg.toUpperCase() : msg;
   const hasL = lab.length > 0;
@@ -85,6 +94,7 @@ function render(q, label, msg) {
 
 module.exports = async (req, res) => {
   const q = req.query || {};
+  if (q.logo) await loadIcons();
   let label = q.label !== undefined ? String(q.label) : '', msg = q.msg !== undefined ? String(q.msg) : '';
   let ttl = 31536000;
   if (q.source) {
