@@ -54,6 +54,22 @@ async function probe(raw) {
 }
 const GOOD = (q) => hex(q.upColor, '#16a34a'), BAD = (q) => hex(q.downColor, '#dc2626');
 
+// Discord presence via Lanyard (the user must join discord.gg/lanyard once).
+async function presence(id) {
+  let j; try { j = await get('https://api.lanyard.rest/v1/users/' + encodeURIComponent(id)); } catch (e) { throw new Error('nolanyard'); }
+  if (!j.success) throw new Error('nolanyard');
+  return j.data;
+}
+const findAct = (d, re) => (d.activities || []).find((a) => re.test(a.name || ''));
+const ideText = (a) => {
+  const file = String(a.details || '').replace(/^(editing|debugging|viewing|reading|working on)\s+/i, '').trim();
+  const ws = String(a.state || '').replace(/^workspace:\s*/i, '').trim();
+  return file ? file + (ws ? ' in ' + ws : '') : (ws || 'idling');
+};
+const joinList = (a) => (a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ', and ' + a[a.length - 1]);
+const PCOL = { online: '#44cc11', idle: '#dfb317', dnd: '#e05d44', offline: '#9f9f9f' };
+const NOTHING = (q) => q.fallback || 'nothing rn';
+
 // Live sources. Add your own here.
 const SOURCES = {
   discord: async (id) => short((await get(`https://discord.com/api/v9/invites/${encodeURIComponent(id)}?with_counts=true`)).approximate_member_count) + ' members',
@@ -79,6 +95,12 @@ const SOURCES = {
     const j = await get(`https://api.mcsrvstat.us/3/${encodeURIComponent(id)}`);
     return j.online ? { msg: `${j.players ? j.players.online : 0}/${j.players ? j.players.max : '?'} players`, color: GOOD(q) } : { msg: q.downText || 'offline', color: BAD(q) };
   },
+  pstatus: async (id, q) => { const d = await presence(id); let st = d.discord_status || 'offline'; if (q.simple === '1' && (st === 'idle' || st === 'dnd')) st = 'online'; return { msg: st, color: PCOL[st] || PCOL.offline }; },
+  pplaying: async (id, q) => { const d = await presence(id); const a = (d.activities || []).find((x) => x.type === 0 && !/visual studio code|intellij|jetbrains|idea|pycharm|webstorm|crunchyroll/i.test(x.name || '')); return a ? a.name : NOTHING(q); },
+  pvscode: async (id, q) => { const a = findAct(await presence(id), /visual studio code|^vs ?code$|^code$/i); return a ? ideText(a) : NOTHING(q); },
+  pintellij: async (id, q) => { const a = findAct(await presence(id), /intellij|jetbrains|idea/i); return a ? ideText(a) : NOTHING(q); },
+  pspotify: async (id, q) => { const d = await presence(id); return d.listening_to_spotify && d.spotify ? `${d.spotify.song} by ${joinList(String(d.spotify.artist).split('; '))}` : NOTHING(q); },
+  pcrunchy: async (id, q) => { const a = findAct(await presence(id), /crunchyroll/i); return a ? (a.details || a.state || 'Crunchyroll') : NOTHING(q); },
   ghrelease: async (id) => (await get(`https://api.github.com/repos/${id}/releases/latest`)).tag_name,
   npmver: async (id) => 'v' + (await get(`https://registry.npmjs.org/${id}/latest`)).version,
   dockerpulls: async (id) => short((await get(`https://hub.docker.com/v2/repositories/${id}`)).pull_count),
@@ -152,9 +174,9 @@ module.exports = async (req, res) => {
   let label = q.label !== undefined ? String(q.label) : '', msg = q.msg !== undefined ? String(q.msg) : '';
   let ttl = 31536000, auto = null;
   if (q.source) {
-    ttl = ['uptime', 'latency', 'minecraft'].includes(q.source) ? 120 : 600;
+    ttl = ['uptime', 'latency', 'minecraft'].includes(q.source) ? 120 : /^p(status|playing|vscode|intellij|spotify|crunchy)$/.test(q.source) ? 30 : 600;
     try { if (!SOURCES[q.source]) throw new Error('unknown source'); const v = await SOURCES[q.source](String(q.id || ''), q); if (v && typeof v === 'object') { msg = v.msg; auto = v.color; } else msg = v; }
-    catch (e) { msg = e.message === 'nokey' ? 'no API key' : 'unavailable'; ttl = 60; }
+    catch (e) { msg = e.message === 'nokey' ? 'no API key' : e.message === 'nolanyard' ? 'not tracked' : 'unavailable'; ttl = 60; }
   }
   res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
   res.setHeader('Access-Control-Allow-Origin', '*');
