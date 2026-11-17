@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/badge",
+      "destination": "/api/badge"
+    },
+    {
+      "source": "/presence/:id",
+      "destination": "/api/presence?id=:id"
+    },
+    {
+      "source": "/openspotify/:id",
+      "destination": "/api/openspotify?id=:id"
+    }
+  ]
+}
