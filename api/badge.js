@@ -42,6 +42,18 @@ const get = async (url) => {
   return r.json();
 };
 
+// Fetch a website and report whether it answered (blocks private/local addresses).
+async function probe(raw) {
+  let url = String(raw).trim(); if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  const u = new URL(url), h = u.hostname.toLowerCase();
+  if (h === 'localhost' || h.endsWith('.local') || h.endsWith('.internal') || h.startsWith('[') || /^(0\.|10\.|127\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(h)) throw new Error('blocked');
+  const t0 = Date.now(), ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 7000);
+  try { const r = await fetch(u.href, { redirect: 'follow', signal: ctl.signal, headers: { 'User-Agent': 'patch-badges-status' } }); return { ok: r.status < 400, ms: Date.now() - t0 }; }
+  catch (e) { return { ok: false, ms: Date.now() - t0 }; }
+  finally { clearTimeout(to); }
+}
+const GOOD = (q) => hex(q.upColor, '#16a34a'), BAD = (q) => hex(q.downColor, '#dc2626');
+
 // Live sources. Add your own here.
 const SOURCES = {
   discord: async (id) => short((await get(`https://discord.com/api/v9/invites/${encodeURIComponent(id)}?with_counts=true`)).approximate_member_count) + ' members',
@@ -60,6 +72,12 @@ const SOURCES = {
     const run = j.workflow_runs && j.workflow_runs[0]; if (!run) throw new Error('none');
     const c = run.conclusion;
     return c === 'success' ? { msg: 'passing', color: '#16a34a' } : c === 'failure' ? { msg: 'failing', color: '#dc2626' } : { msg: c || 'unknown', color: '#d97706' };
+  },
+  uptime: async (id, q) => { const r = await probe(id); return r.ok ? { msg: q.upText || 'online', color: GOOD(q) } : { msg: q.downText || 'offline', color: BAD(q) }; },
+  latency: async (id, q) => { const r = await probe(id); return !r.ok ? { msg: q.downText || 'offline', color: BAD(q) } : { msg: r.ms + ' ms', color: r.ms < 500 ? GOOD(q) : r.ms < 1500 ? '#d97706' : BAD(q) }; },
+  minecraft: async (id, q) => {
+    const j = await get(`https://api.mcsrvstat.us/3/${encodeURIComponent(id)}`);
+    return j.online ? { msg: `${j.players ? j.players.online : 0}/${j.players ? j.players.max : '?'} players`, color: GOOD(q) } : { msg: q.downText || 'offline', color: BAD(q) };
   },
   ghrelease: async (id) => (await get(`https://api.github.com/repos/${id}/releases/latest`)).tag_name,
   npmver: async (id) => 'v' + (await get(`https://registry.npmjs.org/${id}/latest`)).version,
@@ -134,8 +152,8 @@ module.exports = async (req, res) => {
   let label = q.label !== undefined ? String(q.label) : '', msg = q.msg !== undefined ? String(q.msg) : '';
   let ttl = 31536000, auto = null;
   if (q.source) {
-    ttl = 600;
-    try { if (!SOURCES[q.source]) throw new Error('unknown source'); const v = await SOURCES[q.source](String(q.id || '')); if (v && typeof v === 'object') { msg = v.msg; auto = v.color; } else msg = v; }
+    ttl = ['uptime', 'latency', 'minecraft'].includes(q.source) ? 120 : 600;
+    try { if (!SOURCES[q.source]) throw new Error('unknown source'); const v = await SOURCES[q.source](String(q.id || ''), q); if (v && typeof v === 'object') { msg = v.msg; auto = v.color; } else msg = v; }
     catch (e) { msg = e.message === 'nokey' ? 'no API key' : 'unavailable'; ttl = 60; }
   }
   res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
