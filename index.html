@@ -57,11 +57,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 h3{font:600 13px Inter,sans-serif;color:var(--muted);margin:22px 0 14px;padding-top:16px;border-top:1px solid var(--line)}
 .right{align-self:start;position:sticky;top:16px}
 @media(max-width:800px){.right{position:static}}
-.copy.alt{background:none;color:var(--ink);border:1px solid var(--line)}.btns{display:flex;gap:8px;flex-wrap:wrap}.tabs{flex-wrap:wrap}#live{display:flex;gap:8px;margin-bottom:10px}#live[hidden]{display:none}#host{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}#host[hidden]{display:none}#host input,#host select{flex:1 1 140px}#note{font-size:13px;color:var(--muted);margin:10px 0 0}.steps{display:grid;gap:16px;align-content:start}.step{display:flex;gap:10px;align-items:center;font:600 16px Inter,sans-serif;margin:0 0 14px}.step b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px}summary{cursor:pointer;font-weight:600}.hint{font-size:12px;color:var(--muted);margin:6px 0 0}.status{font-size:13px;color:var(--muted);margin:8px 2px 0;min-height:20px}[hidden]{display:none!important}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;flex:none}.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted)}.foot b{color:var(--ink)}.explore{background:var(--accent);color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:600}.explore:hover{opacity:.9}</style>
+.copy.alt{background:none;color:var(--ink);border:1px solid var(--line)}.btns{display:flex;gap:8px;flex-wrap:wrap}.tabs{flex-wrap:wrap}#live{display:flex;gap:8px;margin-bottom:10px}#live[hidden]{display:none}#host{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}#host[hidden]{display:none}#host input,#host select{flex:1 1 140px}#note{font-size:13px;color:var(--muted);margin:10px 0 0}.steps{display:grid;gap:16px;align-content:start}.step{display:flex;gap:10px;align-items:center;font:600 16px Inter,sans-serif;margin:0 0 14px}.step b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px}summary{cursor:pointer;font-weight:600}.hint{font-size:12px;color:var(--muted);margin:6px 0 0}.status{font-size:13px;color:var(--muted);margin:8px 2px 0;min-height:20px}[hidden]{display:none!important}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;flex:none}.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted)}.foot b{color:var(--ink)}.explore{background:var(--accent);color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:600}.explore:hover{opacity:.9}.imp{margin-bottom:20px}.imp .row{align-items:center}.imp .row .mini{flex:0 0 auto;padding:11px 18px}</style>
 </head>
 <body>
 <main>
   <div class="top"><div><h1 class="brand"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#4326e0"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#lg)"/><rect x="8" y="16" width="32" height="16" rx="8" fill="#fff"/><rect x="8" y="16" width="15" height="16" rx="8" fill="#1b1740"/><rect x="16" y="16" width="7" height="16" fill="#1b1740"/><circle cx="16" cy="24" r="2.6" fill="#fff"/><rect x="27" y="22" width="9" height="4" rx="2" fill="#16a34a"/></svg>Patch</h1><p class="sub">Make a badge in 3 steps, then copy it into your README.</p></div><button id="theme" type="button">Theme</button></div>
+  <section class="panel imp"><label for="imp">Switching from Shields.io? Paste your badge here and Patch converts it.</label><div class="row"><input type="text" id="imp" placeholder="![build](https://img.shields.io/badge/build-passing-brightgreen)" autocomplete="off"><button type="button" class="mini" id="impb">Convert</button></div><p class="hint" id="impst"></p></section>
   <div class="grid">
     <div class="steps">
       <section class="panel">
@@ -313,6 +314,66 @@ $('dgif').onclick=async function(){var b=this;b.textContent='Making GIF…';try{
 var HINT={discord:'Invite code (after discord.gg/)',discordonline:'Invite code',youtube:'@handle or channel id (needs a YouTube API key in Vercel)',bluesky:'handle, e.g. name.bsky.social',mastodon:'user@instance.social',reddit:'subreddit name',hnkarma:'username',ghfollowers:'GitHub username',ghstars:'owner/repo',ghforks:'owner/repo',ghissues:'owner/repo',ghrelease:'owner/repo',npmdl:'package name',npmver:'package name',pypidl:'package name',crates:'crate name',dockerpulls:'user/image'};
 var LBL={discord:'discord',discordonline:'discord',youtube:'subscribers',bluesky:'bluesky',mastodon:'followers',reddit:'members',hnkarma:'karma',ghfollowers:'followers',ghstars:'stars',ghforks:'forks',ghissues:'issues',ghrelease:'release',npmdl:'downloads',npmver:'npm',pypidl:'downloads',crates:'downloads',dockerpulls:'pulls'};
 $('src').addEventListener('change',function(){$('sid').placeholder=HINT[this.value]||'';$('hint').textContent=HINT[this.value]?'Enter: '+HINT[this.value]:'';if(LBL[this.value]){S.label=LBL[this.value];sync()}render()});
+var SHCOL={brightgreen:'#4c1',green:'#97ca00',yellowgreen:'#a4a61d',yellow:'#dfb317',orange:'#fe7d37',red:'#e05d44',blue:'#007ec6',lightgrey:'#9f9f9f',lightgray:'#9f9f9f',grey:'#555555',gray:'#555555',success:'#44cc11',important:'#fe7d37',critical:'#e05d44',informational:'#007ec6',inactive:'#9f9f9f'};
+var SH2P={'flat':'solid','flat-square':'square','plastic':'plastic','for-the-badge':'ftb','social':'solid'};
+var TBL=[['github/stars/','ghstars',2],['github/forks/','ghforks',2],['github/issues/','ghissues',2],['github/followers/','ghfollowers',1],['github/v/release/','ghrelease',2],['github/release/','ghrelease',2],['npm/v/','npmver',-1],['npm/dm/','npmdl',-1],['npm/dw/','npmdl',-1],['npm/dt/','npmdl',-1],['pypi/dm/','pypidl',-1],['docker/pulls/','dockerpulls',2],['youtube/channel/subscribers/','youtube',1],['reddit/subreddit-subscribers/','reddit',1],['crates/d/','crates',1],['crates/dr/','crates',1],['hackernews/user-karma/','hnkarma',1],['bluesky/followers/','bluesky',1],['discord/','discord',1]];
+function hex6(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(function(x){return x+x}).join('');return '#'+h}
+function toHex(c){
+  if(!c)return null;c=String(c).trim().toLowerCase();
+  if(SHCOL[c])return hex6(SHCOL[c]);
+  if(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/.test(c))return hex6(c);
+  cv.fillStyle='#000001';cv.fillStyle=c;var v=cv.fillStyle;
+  if(v==='#000001')return null;
+  if(v[0]==='#')return v;
+  var m=v.match(/\d+/g);return m?'#'+m.slice(0,3).map(function(n){return('0'+(+n).toString(16)).slice(-2)}).join(''):null;
+}
+function findLogo(n){n=n.toLowerCase().trim();return BY[n]||BY[n.replace(/[^a-z0-9]/g,'')]||BY[n.replace(/\./g,'dot').replace(/\+/g,'plus').replace(/[^a-z0-9]/g,'')]||ICONS.filter(function(i){return i[0].toLowerCase()===n})[0]}
+function parseSh(text){
+  var m=text.match(/https?:\/\/(?:img\.)?shields\.io\/[^\s)"'<>\]]+/i);if(!m)return null;
+  var url;try{url=new URL(m[0])}catch(e){return null}
+  var lm=text.match(/\]\(\s*<?(https?:\/\/(?!(?:img\.)?shields\.io)[^)\s>]+)/)||text.match(/<a[^>]+href=["']([^"']+)["']/i);
+  var segs=url.pathname.replace(/\.(svg|png|json|jpg)$/i,'').split('/').filter(Boolean).map(function(x){try{return decodeURIComponent(x)}catch(e){return x}});
+  var q=url.searchParams,r={link:lm?lm[1]:'',style:q.get('style'),logo:q.get('logo'),logoColor:q.get('logoColor'),labelColor:q.get('labelColor'),color:q.get('color'),label:q.get('label')};
+  if(segs[0]==='badge'&&segs[1]){
+    var t=segs[1].replace(/--/g,'\u0001').split('-').map(function(x){return x.replace(/\u0001/g,'-').replace(/__/g,'\u0002').replace(/_/g,' ').replace(/\u0002/g,'_')});
+    if(t.length===1){r.lab='';r.msg=t[0]}
+    else if(t.length===2){if(toHex(t[1])){r.lab='';r.msg=t[0];r.pc=t[1]}else{r.lab=t[0];r.msg=t[1]}}
+    else{r.lab=t[0];r.pc=t[t.length-1];r.msg=t.slice(1,-1).join('-')}
+    r.kind='static';
+  }else if(segs[0]==='static'&&segs[1]==='v1'){r.kind='static';r.lab='';r.msg=q.get('message')||''}
+  else{
+    var p=segs.join('/')+'/';
+    for(var i=0;i<TBL.length;i++)if(p.indexOf(TBL[i][0])===0){var rest=p.slice(TBL[i][0].length).replace(/\/$/,'').split('/'),n=TBL[i][2];r.kind='live';r.src=TBL[i][1];r.id=(n>0?rest.slice(0,n):rest).join('/');break}
+    if(!r.kind)r.kind='unsupported';
+  }
+  return r;
+}
+function applyImport(text){
+  var st=$('impst'),r=parseSh(text);
+  if(!r){st.textContent='That does not look like a Shields.io badge.';return}
+  var notes=[],c=toHex(r.color||r.pc),lab=r.label!==null?r.label:r.lab;
+  $('src').value=r.kind==='live'?r.src:'static';$('src').dispatchEvent(new Event('change'));
+  S.style=SH2P[r.style||'flat']||'solid';S.dot=false;S.ltc=S.mtc=null;
+  S.lc=toHex(r.labelColor)||'#555555';
+  if(r.kind==='static'){S.mc=c||'#9f9f9f';S.label=lab;S.msg=r.msg}
+  else if(r.kind==='live'){
+    if(c)S.mc=c;S.label=r.label!==null?r.label:(LBL[r.src]||S.label);$('sid').value=r.id;
+    if(r.src==='discord'){$('sid').value='';notes.push('Patch needs your Discord invite code (the part after discord.gg/) in step 1, not a server ID.')}
+  }else{
+    notes.push('Patch cannot draw that kind of live badge yet, so I only applied the style, colors and logo.');
+    if(c)S.mc=c;if(r.label!==null)S.label=r.label;
+  }
+  var lg=r.logo?findLogo(r.logo):null;
+  S.icon=lg?{t:lg[0],h:lg[2],p:lg[3],s:lg[1]}:null;
+  if(r.logo&&!lg)notes.push('The logo "'+r.logo+'" was not found.');
+  S.ic=toHex(r.logoColor)||null;
+  if(r.link)$('lnk').value=r.link;
+  sync();render();
+  st.textContent='Converted. '+notes.join(' ');
+}
+var impT;
+$('impb').onclick=function(){applyImport($('imp').value)};
+$('imp').addEventListener('input',function(){var v=this.value;clearTimeout(impT);if(/shields\.io/i.test(v))impT=setTimeout(function(){applyImport(v)},300)});
 sync();showIcons();render();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){render()});
 </script>
