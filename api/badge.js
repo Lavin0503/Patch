@@ -50,6 +50,17 @@ const SOURCES = {
   discordonline: async (id) => short((await get(`https://discord.com/api/v9/invites/${encodeURIComponent(id)}?with_counts=true`)).approximate_presence_count) + ' online',
   ghforks: async (id) => short((await get(`https://api.github.com/repos/${id}`)).forks_count),
   ghissues: async (id) => short((await get(`https://api.github.com/repos/${id}`)).open_issues_count),
+  ghdownloads: async (id) => {
+    const rel = await get(`https://api.github.com/repos/${id}/releases?per_page=100`);
+    return short(rel.reduce((t, r) => t + r.assets.reduce((a, x) => a + x.download_count, 0), 0));
+  },
+  ghbuild: async (id) => {
+    const [o, r, ...f] = id.split('/');
+    const j = await get(`https://api.github.com/repos/${o}/${r}/actions/workflows/${f.join('/')}/runs?per_page=1&status=completed`);
+    const run = j.workflow_runs && j.workflow_runs[0]; if (!run) throw new Error('none');
+    const c = run.conclusion;
+    return c === 'success' ? { msg: 'passing', color: '#16a34a' } : c === 'failure' ? { msg: 'failing', color: '#dc2626' } : { msg: c || 'unknown', color: '#d97706' };
+  },
   ghrelease: async (id) => (await get(`https://api.github.com/repos/${id}/releases/latest`)).tag_name,
   npmver: async (id) => 'v' + (await get(`https://registry.npmjs.org/${id}/latest`)).version,
   dockerpulls: async (id) => short((await get(`https://hub.docker.com/v2/repositories/${id}`)).pull_count),
@@ -69,12 +80,12 @@ const SOURCES = {
   npmdl: async (id) => short((await get(`https://api.npmjs.org/downloads/point/last-month/${id}`)).downloads) + '/mo',
 };
 
-function render(q, label, msg) {
+function render(q, label, msg, auto) {
   let style = ['solid', 'soft', 'outline', 'square', 'plastic', 'ftb'].includes(q.style) ? q.style : 'solid';
   const h = num(q.h, 28, 16, 64), F = FONTS[q.font] || FONTS.Inter;
   let fw = num(q.fw, 600, 300, 900), pad = h * num(q.pad, 40, 10, 120) / 100;
   const fs = Math.round(h * num(q.fsz, 46, 20, 80) / 10) / 10;
-  const mc = hex(q.color, '#16a34a'), lc = hex(q.labelColor, '#1b1740');
+  const mc = hex(q.color, auto || '#16a34a'), lc = hex(q.labelColor, '#1b1740');
   const up = on(q.up) || style === 'ftb', grad = on(q.grad) || style === 'plastic';
   if (style === 'ftb') { fw = 700; pad *= 1.3; }
   const r = style === 'square' || style === 'ftb' ? 3 : h / 2 * num(q.rad, 100, 0, 100) / 100;
@@ -121,14 +132,14 @@ module.exports = async (req, res) => {
   const q = req.query || {};
   if (q.logo) await loadIcons();
   let label = q.label !== undefined ? String(q.label) : '', msg = q.msg !== undefined ? String(q.msg) : '';
-  let ttl = 31536000;
+  let ttl = 31536000, auto = null;
   if (q.source) {
     ttl = 600;
-    try { if (!SOURCES[q.source]) throw new Error('unknown source'); msg = await SOURCES[q.source](String(q.id || '')); }
+    try { if (!SOURCES[q.source]) throw new Error('unknown source'); const v = await SOURCES[q.source](String(q.id || '')); if (v && typeof v === 'object') { msg = v.msg; auto = v.color; } else msg = v; }
     catch (e) { msg = e.message === 'nokey' ? 'no API key' : 'unavailable'; ttl = 60; }
   }
   res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', `public, max-age=${Math.min(ttl, 300)}, s-maxage=${ttl}, stale-while-revalidate=86400`);
-  res.status(200).send(render(q, label.slice(0, 60), msg.slice(0, 60)));
+  res.status(200).send(render(q, label.slice(0, 60), String(msg).slice(0, 60), auto));
 };
